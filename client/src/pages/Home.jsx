@@ -12,7 +12,6 @@ import Footer from '../components/Footer';
 const Home = () => {
   return (
     <div className=" text-gray-900 min-h-screen bg-white">
-      <Navbar />
       <Search/>
       <Hero />
       <HowItWorks/>

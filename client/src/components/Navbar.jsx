@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom"; // if you're using react-router
-import logo from "../assets/logo.png"
+import logo from "../assets/logo.png";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Replace with real auth
@@ -35,7 +35,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to="/login" className="hover:text-indigo-600 text-gray-700">About Us</Link>
+              <Link to="/register" className="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition">Login In</Link>
               <Link to="/register" className="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition">Sign Up</Link>
             </>
           )}
@@ -44,7 +44,7 @@ const Navbar = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={toggleMenu}
-          className="md:hidden text-gray-700 dark:text-white"
+          className="md:hidden text-gray-700"
         >
           <svg
             className="h-6 w-6"
@@ -73,19 +73,21 @@ const Navbar = () => {
 
       {/* Mobile Menu Dropdown */}
       {isMobileMenuOpen && (
-        <div className="md:hidden px-4 pb-4 pt-2 bg-white dark:bg-gray-900 space-y-2 text-sm font-medium">
-          <Link to="/" className="block text-gray-700 dark:text-white">Home</Link>
-          <Link to="/about" className="block text-gray-700 dark:text-white">About</Link>
-          <Link to="/listings" className="block text-gray-700 dark:text-white">Listings</Link>
+        <div className="md:hidden px-4 pb-4 pt-2 bg-white  space-y-2 text-sm font-medium">
+          <Link to="/" className="block text-gray-700 ">Home</Link>
+          <Link to="/about" className="block text-gray-700 ">About</Link>
+          <Link to="/listings" className="block text-gray-700 ">Listings</Link>
 
           {isLoggedIn ? (
             <>
-              <Link to="/dashboard" className="block text-gray-700 dark:text-white">Dashboard</Link>
+              <Link to="/dashboard" className="block text-gray-700">Dashboard</Link>
               <button onClick={handleLogout} className="block text-red-600">Logout</button>
             </>
           ) : (
             <>
-              <Link to="/login" className="block text-gray-700 dark:text-white">Login</Link>
+               <Link to="/login" className="block bg-indigo-600 text-white text-center py-2 rounded-full">
+                Login In
+              </Link>
               <Link to="/register" className="block bg-indigo-600 text-white text-center py-2 rounded-full">
                 Sign Up
               </Link>
