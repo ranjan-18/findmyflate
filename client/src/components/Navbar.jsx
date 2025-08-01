@@ -35,7 +35,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to="/register" className="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition">Login In</Link>
+              <Link to="/login" className="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition">Login</Link>
               <Link to="/register" className="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition">Sign Up</Link>
             </>
           )}

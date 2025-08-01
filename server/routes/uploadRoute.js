@@ -1,13 +1,28 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const upload = require('../middleware/upload');
+const multer = require("multer");
+const cloudinary = require("cloudinary").v2;
+const fs = require("fs");
+require("dotenv").config();
 
-router.post('/upload', upload.single('image'), (req, res) => {
+// Cloudinary config
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+// Multer setup
+const upload = multer({ dest: "uploads/" });
+
+router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const fileUrl = req.file.path; // URL from Cloudinary
-    res.status(200).json({ imageUrl: fileUrl });
-  } catch (err) {
-    res.status(500).json({ error: 'Image upload failed' });
+    const result = await cloudinary.uploader.upload(req.file.path);
+    fs.unlinkSync(req.file.path); // clean up local file
+    res.json({ url: result.secure_url });
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(500).json({ message: "Image upload failed", error });
   }
 });
 

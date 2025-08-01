@@ -1,23 +1,35 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext.jsx";
+import { loginUser } from "../api/api.js";
+import { toast } from "react-toastify";
 import loginImg from "../assets/login.jpg";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login:", formData);
+    try {
+      const res = await loginUser(formData);
+      login(res.data.user, res.data.token); // saves in context + localStorage
+      toast.success("Login successful!");
+      navigate("/"); // redirect to homepage or dashboard
+    } catch (err) {
+      const msg = err.response?.data?.message || "Login failed. Try again.";
+      toast.error(msg);
+    }
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 flex items-center justify-center px-4 py-10 h-screen overflow-y-hidden">
+    <div className="min-h-screen w-full bg-gray-50 flex items-center justify-center px-4 py-10">
       <div className="flex flex-col md:flex-row w-full max-w-5xl bg-white rounded-2xl shadow-lg overflow-hidden">
-        
         {/* Form Section */}
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center">
           <h2 className="text-3xl font-bold mb-2 text-center text-gray-800">Welcome Back</h2>
@@ -25,9 +37,7 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="email" className="text-sm font-medium block mb-1 text-gray-700">
-                Email Address
-              </label>
+              <label htmlFor="email" className="text-sm font-medium block mb-1 text-gray-700">Email Address</label>
               <input
                 id="email"
                 name="email"
@@ -40,9 +50,7 @@ export default function Login() {
             </div>
 
             <div>
-              <label htmlFor="password" className="text-sm font-medium block mb-1 text-gray-700">
-                Password
-              </label>
+              <label htmlFor="password" className="text-sm font-medium block mb-1 text-gray-700">Password</label>
               <input
                 id="password"
                 name="password"
@@ -72,11 +80,7 @@ export default function Login() {
 
         {/* Image Section */}
         <div className="w-full md:w-1/2 hidden md:block">
-          <img 
-            src={loginImg}
-            alt="Login Visual"
-            className="h-full w-full object-cover"
-          />
+          <img src={loginImg} alt="Login Visual" className="h-full w-full object-cover" />
         </div>
       </div>
     </div>

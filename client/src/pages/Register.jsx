@@ -1,153 +1,118 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import signup from '../assets/login.jpg';
+import { registerUser } from '../api/api.js';
 import { toast } from 'react-toastify';
-import axios from 'axios';
-import loginImg from '../assets/login.jpg';
 
-export default function Register() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    profileImage: null,
-  });
-
-  const [preview, setPreview] = useState(null);
+const Register = () => {
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-    if (name === 'profileImage') {
-      const file = files[0];
-      setFormData({ ...formData, profileImage: file });
-      setPreview(URL.createObjectURL(file));
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const data = new FormData();
-    data.append('name', formData.name);
-    data.append('email', formData.email);
-    data.append('password', formData.password);
-    if (formData.profileImage) {
-      data.append('profileImage', formData.profileImage);
-    }
-
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
-        data,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      toast.success('Registration successful! Please login.');
+      const payload = { name, phone, email, password, role };
+      const res = await registerUser(payload);
+      toast.success("Registration successful!");
       navigate('/login');
-    } catch (error) {
-      const message =
-        error.response?.data?.message || 'Registration failed. Try again.';
-      toast.error(message);
+    } catch (err) {
+      console.error("Register error:", err);
+      toast.error(err?.response?.data?.message || "Registration failed");
     }
   };
 
   return (
-    <div className="min-h-screen w-full bg-gray-50 flex items-center justify-center px-4 py-10 h-screen overflow-hidden">
-      <div className="flex flex-col-reverse md:flex-row w-full max-w-5xl bg-white rounded-2xl shadow-2xl ">
+    <div className="min-h-[100vh] flex items-center justify-center bg-gray-50 py-12 px-4 md:px-8">
+      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 bg-white shadow-2xl rounded-2xl overflow-hidden">
+        {/* Image Section */}
+        <div className="flex justify-center items-center bg-gray-100">
+          <img
+            src={signup}
+            alt="Sign Up Illustration"
+            className="object-cover w-full md:h-full"
+          />
+        </div>
+
         {/* Form Section */}
-        <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
-          <h2 className="text-3xl font-bold mb-2 text-center">Create Account</h2>
-          <p className="text-sm text-gray-500 mb-6 text-center">Please fill in the details</p>
+        <div className="flex flex-col justify-center items-center px-6 py-10">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">Sign Up</h1>
+          <p className="text-gray-600 mb-6 text-center">Create an account to list flats or find your next stay.</p>
 
-          <form onSubmit={handleSubmit} className="space-y-5" encType="multipart/form-data">
-            <div>
-              <label htmlFor="name" className="text-sm font-medium block mb-1">Full Name</label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                onChange={handleChange}
-                value={formData.name}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+          <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-sm">
+            <input
+              type="text"
+              placeholder="Enter your Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              type="text"
+              placeholder="Enter your Phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              required
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              type="email"
+              placeholder="Enter your Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <div className="text-left">
+              <label className="block mb-1 text-sm font-medium text-gray-700">Select Role</label>
+              <select
+                name="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
                 required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="email" className="text-sm font-medium block mb-1">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                onChange={handleChange}
-                value={formData.email}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="text-sm font-medium block mb-1">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                onChange={handleChange}
-                value={formData.password}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="profileImage" className="text-sm font-medium block mb-1">Profile Picture</label>
-              <input
-                id="profileImage"
-                name="profileImage"
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
-                className="w-full text-sm border border-gray-300 rounded-md px-4 py-2 bg-white file:mr-4 file:py-1 file:px-3 file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
-              />
-              {preview && (
-                <img
-                  src={preview}
-                  alt="Preview"
-                  className="mt-3 w-24 h-24 rounded-full object-cover border-2 border-gray-300"
-                />
-              )}
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Choose a role</option>
+                <option value="tenant">Tenant</option>
+                <option value="owner">Owner</option>
+              </select>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition-all duration-200"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300"
             >
-              Register
+              Create Account
             </button>
           </form>
 
-          <p className="mt-4 text-sm text-gray-600 text-center">
-            Already have an account?{" "}
-            <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
+          {/* Link to Login */}
+          <p className="mt-6 text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link to="/login" className="text-blue-600 hover:underline font-medium">
+              Log in
+            </Link>
           </p>
-        </div>
-
-        {/* Image Section */}
-        <div className="w-full md:w-1/2 h-auto">
-          <img
-            src={loginImg}
-            alt="Visual"
-            className="w-full object-cover m-5 h-auto"
-          />
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Register;
